@@ -9,7 +9,7 @@ from pddlgym.parser import PDDLProblemParser
 from pddlgym.downward_translate.instantiate import explore as downward_explore
 from pddlgym.downward_translate.pddl_parser import open as downward_open
 from pddlgym.utils import nostdout
-from gym.spaces import Space
+from gymnasium.spaces import Space
 from collections import defaultdict
 
 import os
@@ -37,7 +37,7 @@ class LiteralSpace(Space):
         self._objects = None
 
     def _update_objects_from_state(self, state):
-        """Given a state, extract the objects and if they have changed, 
+        """Given a state, extract the objects and if they have changed,
         recompute all ground literals
         """
         # Check whether the objects have changed
@@ -65,7 +65,7 @@ class LiteralSpace(Space):
             lit = self._all_ground_literals[idx]
             if self._lit_valid_test(state, lit):
                 break
-        return lit  
+        return lit
 
     def sample(self, state):
         self._update_objects_from_state(state)
