@@ -9,11 +9,11 @@ import matplotlib
 # matplotlib.use("Agg")
 from pddlgym.rendering import *
 from gym.envs.registration import register
-import gym
+import gymnasium as gym
 
 import os
 
-# Save users from having to separately import gym
+# Save users from having to separately import gymnasium as gym
 def make(*args, **kwargs):
     # env checker fails since obs is not an numpy array like object
     return gym.make(*args, disable_env_checker=True, **kwargs)
@@ -76,40 +76,40 @@ for env_name, kwargs in [
         ("easyblocks", {'render' : blocks_render}),
         ("conditionalblocks", {'render' : blocks_render}),
         ("conditionalferry", {}),
-        ("blocks_operator_actions", {'render' : blocks_render, 
+        ("blocks_operator_actions", {'render' : blocks_render,
                                      'operators_as_actions' : True,
                                      'dynamic_action_space' : True}),
-        ("generated_blocks", {'render' : blocks_render, 
+        ("generated_blocks", {'render' : blocks_render,
                               'operators_as_actions' : True,
                               'dynamic_action_space' : True}),
-        ("blocks_medium", {'render' : blocks_render, 
+        ("blocks_medium", {'render' : blocks_render,
                            'operators_as_actions' : True,
                            'dynamic_action_space' : True}),
-        ("manyblocksnopiles", {'render' : blocks_render, 
+        ("manyblocksnopiles", {'render' : blocks_render,
                                'operators_as_actions' : True,
                                'dynamic_action_space' : True}),
         ("manyexplodingblockssmallpiles", {'render' : blocks_render,
                                            'operators_as_actions' : True,
                                            'dynamic_action_space' : True}),
-        ("manyblockssmallpiles", {'render' : blocks_render, 
+        ("manyblockssmallpiles", {'render' : blocks_render,
                                   'operators_as_actions' : True,
                                   'dynamic_action_space' : True}),
-        ("manyblockssmallpilesnoclear", {'render' : blocks_render, 
+        ("manyblockssmallpilesnoclear", {'render' : blocks_render,
                                   'operators_as_actions' : True,
                                   'dynamic_action_space' : True}),
-        ("manyblockssmallpilesnohand", {'render' : blocks_render, 
+        ("manyblockssmallpilesnohand", {'render' : blocks_render,
                                   'operators_as_actions' : True,
                                   'dynamic_action_space' : True}),
-        ("manyblockssmallpilesnoclearhand", {'render' : blocks_render, 
+        ("manyblockssmallpilesnoclearhand", {'render' : blocks_render,
                                   'operators_as_actions' : True,
                                   'dynamic_action_space' : True}),
-        ("quantifiedblocks", {'render' : blocks_render, 
+        ("quantifiedblocks", {'render' : blocks_render,
                               'operators_as_actions' : True,
                               'dynamic_action_space' : True}),
-        ("quantifiedblocks2", {'render' : blocks_render, 
+        ("quantifiedblocks2", {'render' : blocks_render,
                                'operators_as_actions' : True,
                                'dynamic_action_space' : True}),
-        ("quantifiedblocks3", {'render' : blocks_render, 
+        ("quantifiedblocks3", {'render' : blocks_render,
                                'operators_as_actions' : True,
                                'dynamic_action_space' : True}),
         ("equalityblocks", {'operators_as_actions' : True,

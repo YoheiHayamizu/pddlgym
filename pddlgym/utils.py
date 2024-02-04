@@ -6,11 +6,11 @@ import sys
 import itertools
 import numpy as np
 import os
-import gym
+import gymnasium as gym
 import imageio
 
 
-def get_object_combinations(objects, arity, var_types=None, 
+def get_object_combinations(objects, arity, var_types=None,
                             type_to_parent_types=None, allow_duplicates=False):
     type_to_objs = defaultdict(list)
 
@@ -52,7 +52,7 @@ def run_demo(env, policy, max_num_steps=10, render=False,
 
         if render:
             images.append(env.render())
-    
+
         action = policy(obs)
         if verbose:
             print("Act:", action)

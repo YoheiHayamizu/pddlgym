@@ -1,7 +1,7 @@
 from pddlgym.core import PDDLEnv
 from pddlgym.rendering import sar_render, slow_sar_render, posar_render, myopic_posar_render
 from pddlgym.structs import Type, Predicate, Not, State, LiteralConjunction
-import gym
+import gymnasium as gym
 import functools
 import pddlgym
 import os
@@ -75,7 +75,7 @@ def get_sar_successor_state(state, action):
             next_robot_location = adjacency_map[(robot_location, direction)]
             if next_robot_location in clear_locs:
                 is_valid = True
-                pos_preconds = { 
+                pos_preconds = {
                     conn(robot_location, next_robot_location, direction),
                     robot_at("robot0", robot_location),
                     clear(next_robot_location),
@@ -108,7 +108,7 @@ def get_sar_successor_state(state, action):
             person_loc = people_locs[person]
             if person_loc == robot_location:
                 is_valid = True
-                pos_preconds = { 
+                pos_preconds = {
                     robot_at("robot0", robot_location),
                     person_at(person, person_loc),
                     handsfree("robot0"),
@@ -136,7 +136,7 @@ def get_sar_successor_state(state, action):
         """
         if robot_carrying is not None:
             is_valid = True
-            pos_preconds = { 
+            pos_preconds = {
                 robot_at("robot0", robot_location),
                 carrying("robot0", robot_carrying),
             }
@@ -393,7 +393,7 @@ class POSARXrayEnv(gym.Env):
 
     def seed(self, seed=0):
         self._seed = seed
-        self._rng = np.random.RandomState(seed)        
+        self._rng = np.random.RandomState(seed)
 
     def reset(self):
         """
@@ -408,7 +408,7 @@ class POSARXrayEnv(gym.Env):
         # Turn xray vision off
         xray = False
         # Set the state
-        self._state = self._construct_state(robot=robot_loc, 
+        self._state = self._construct_state(robot=robot_loc,
             person=person_room_id, xray=xray, rescued=False)
         # Get the observation
         return self.get_observation(self._state), {}
@@ -590,7 +590,7 @@ class MyopicPOSAREnv(gym.Env):
 
     def seed(self, seed=0):
         self._seed = seed
-        self._rng = np.random.RandomState(seed)        
+        self._rng = np.random.RandomState(seed)
 
     def reset(self):
         """
@@ -599,7 +599,7 @@ class MyopicPOSAREnv(gym.Env):
             problem_idx = self._rng.choice(len(self.problems))
         else:
             problem_idx = self._problem_idx
-        # Set state            
+        # Set state
         self._state = self.problems[problem_idx]
         # Get the observation
         return self.get_observation(self._state), {}
@@ -658,7 +658,7 @@ class MyopicPOSAREnv(gym.Env):
         return tuple(sorted(d.items()))
 
     def get_observation(self, state):
-        """Can only observe: 
+        """Can only observe:
             - the current robot location
             - what's at the location: empty, person, or fire
             - smoke, i.e., a fire that is within manhattan distance 1

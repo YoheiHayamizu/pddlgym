@@ -1,6 +1,6 @@
 from pddlgym.demo import run_all
 
-import gym
+import gymnasium as gym
 import pddlgym
 
 import unittest

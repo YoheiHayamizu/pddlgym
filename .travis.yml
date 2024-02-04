@@ -1,6 +1,6 @@
 language: python
 python:
-  - "3.6"
+  - "3.8"
 install:
   - pip install -r requirements.txt
   - curl https://fai.cs.uni-saarland.de/hoffmann/ff/FF-v2.3.tgz --output FF-v2.3.tgz
