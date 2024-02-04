@@ -23,7 +23,7 @@ def fig2data(fig, dpi: int = 150):
     # get the dpi adjusted figure dimensions
     width, height = map(int, fig.get_size_inches() * fig.get_dpi())
     data = data.reshape(height, width, 4)
-    
+
     data[..., [0, 1, 2, 3]] = data[..., [1, 2, 3, 0]]
 
     return data
@@ -46,7 +46,7 @@ def initialize_figure(height, width, fig_scale=1., grid_colors=None):
                 face_color = grid_colors[r, c]
             else:
                 face_color = 'white'
-            
+
             drawing = RegularPolygon((c + 0.5, (height - 1 - r) + 0.5),
                                          numVertices=4,
                                          radius=0.5 * np.sqrt(2),
@@ -74,7 +74,7 @@ def render_from_layout(layout, get_token_images, dpi=150, grid_colors=None):
     im = Image.fromarray(im)
     new_width, new_height = (int(im.size[0] * IM_SCALE), int(im.size[1] * IM_SCALE))
     # TODO : switch resize method to Image.Resampling.LANCZOS when pillow>=10 is supported
-    im = im.resize((new_width, new_height), Image.ANTIALIAS)
+    im = im.resize((new_width, new_height), Image.LANCZOS)
     im = np.array(im)
 
     return im
