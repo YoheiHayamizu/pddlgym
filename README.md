@@ -83,7 +83,7 @@ obs, debug_info = env.reset()
 img = env.render()
 imageio.imsave("frame1.png", img)
 action = env.action_space.sample(obs)
-obs, reward, done, debug_info = env.step(action)
+obs, reward, terminated, truncated, debug_info = env.step(action)
 img = env.render()
 imageio.imsave("frame2.png", img)
 ```
@@ -105,8 +105,8 @@ plan = planner(env.domain, obs)
 for act in plan:
     print("Obs:", obs)
     print("Act:", act)
-    obs, reward, done, info = env.step(act)
-print("Final obs, reward, done:", obs, reward, done)
+    obs, reward, terminated, truncated, info = env.step(act)
+print("Final obs, reward, terminated, truncated:", obs, reward, terminated, truncated)
 ```
 
 ## Observation representation

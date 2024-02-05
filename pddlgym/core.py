@@ -13,7 +13,7 @@ Usage example:
 >>> env = PDDLEnv("pddl/sokoban.pddl", "pddl/sokoban")
 >>> obs, debug_info = env.reset()
 >>> action = env.action_space.sample()
->>> obs, reward, done, debug_info = env.step(action)
+>>> obs, reward, terminated, truncated, debug_info = env.step(action)
 """
 from pddlgym.parser import PDDLDomainParser, PDDLProblemParser, PDDLParser
 from pddlgym.inference import find_satisfying_assignments, check_goal
@@ -478,24 +478,29 @@ class PDDLEnv(gym.Env):
             The set of active predicates.
         reward : float
             1 if the goal is reached and 0 otherwise.
-        done : bool
+        terminated : bool
             True if the goal is reached.
+        truncated : bool
+            Always False.
         debug_info : dict
             See self._get_debug_info.
         """
-        state, reward, done, debug_info = self.sample_transition(action)
+        state, reward, terminated, truncated, debug_info = self.sample_transition(action)
         self.set_state(state)
-        return state, reward, done, debug_info
+        return state, reward, terminated, truncated, debug_info
 
     def _get_new_state_info(self, state):
         state = self._handle_derived_literals(state)
 
-        done = self._is_goal_reached(state)
+        terminated = self._is_goal_reached(state)
+        truncated = False
+
+        done = terminated or truncated
 
         reward = self.extrinsic_reward(state, done)
         debug_info = self._get_debug_info()
 
-        return state, reward, done, debug_info
+        return state, reward, terminated, truncated, debug_info
 
     def sample_transition(self, action):
         state = self._get_successor_state(self._state, action, self.domain,

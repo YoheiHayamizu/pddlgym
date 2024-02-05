@@ -344,9 +344,9 @@ class SearchAndRescueEnv(PDDLSearchAndRescueEnv):
         return self._internal_to_state(internal_state), debug_info
 
     def step(self, action):
-        internal_state, reward, done, debug_info = super().step(action)
+        internal_state, reward, terminated, truncated, debug_info = super().step(action)
         state = self._internal_to_state(internal_state)
-        return state, reward, done, debug_info
+        return state, reward, terminated, truncated, debug_info
 
     def get_successor_state(self, state, action):
         internal_state = self._state_to_internal(state)
@@ -543,11 +543,12 @@ class POSARXrayEnv(gym.Env):
         """
         self._state = self.get_successor_state(self._state, action)
 
-        # We're done if the person is rescued
-        done = self.check_goal(self._state)
-        reward = float(done)
+        # We're teraminated if the person is rescued
+        terminated = self.check_goal(self._state)
+        truncated = False
+        reward = float(terminated)
 
-        return self.get_observation(self._state), reward, done, {}
+        return self.get_observation(self._state), reward, terminated, truncated, {}
 
     def render(self, *args, **kwargs):
         return posar_render(self.get_observation(self._state), self)
@@ -648,11 +649,12 @@ class MyopicPOSAREnv(gym.Env):
         """
         self._state = self.get_successor_state(self._state, action)
 
-        # We're done if the person is rescued
-        done = self.check_goal(self._state)
-        reward = float(done)
+        # We're teraminated if the person is rescued
+        terminated = self.check_goal(self._state)
+        truncated = False
+        reward = float(terminated)
 
-        return self.get_observation(self._state), reward, done, {}
+        return self.get_observation(self._state), reward, terminated, truncated, {}
 
     def _flat_dict_to_hashable(self, d):
         return tuple(sorted(d.items()))
@@ -820,10 +822,10 @@ if __name__ == "__main__":
         imgs.append(env.render())
         plan = np.random.choice(env.get_possible_actions(), size=50)
         for act in plan:
-            obs, reward, done, _ = env.step(act)
-            print(obs, reward, done)
+            obs, reward, terminated, truncated, _ = env.step(act)
+            print(obs, reward, terminated, truncated)
             imgs.append(env.render())
-            if done:
+            if terminated or truncated:
                 break
         imageio.mimsave(f"/tmp/{env_name}_random.mp4", imgs)
 

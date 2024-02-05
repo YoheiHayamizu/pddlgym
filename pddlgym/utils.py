@@ -57,12 +57,13 @@ def run_demo(env, policy, max_num_steps=10, render=False,
         if verbose:
             print("Act:", action)
 
-        obs, reward, done, _ = env.step(action)
+        obs, reward, terminated, truncated, _ = env.step(action)
+
         env.render()
         if verbose:
             print("Rew:", reward)
 
-        if done:
+        if terminated or truncated:
             break
 
     if verbose:
