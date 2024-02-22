@@ -15,6 +15,7 @@ Usage example:
 >>> action = env.action_space.sample()
 >>> obs, reward, terminated, truncated, debug_info = env.step(action)
 """
+from typing import Any, Optional
 from pddlgym.parser import PDDLDomainParser, PDDLProblemParser, PDDLParser
 from pddlgym.inference import find_satisfying_assignments, check_goal
 from pddlgym.structs import ground_literal, Literal, State, ProbabilisticEffect, LiteralConjunction, NoChange
@@ -417,7 +418,7 @@ class PDDLEnv(gym.Env):
         self._problem_idx = problem_idx
         self._problem_index_fixed = True
 
-    def reset(self):
+    def reset(self, *, seed: int | None = None, options: dict[str, Any] | None = None):
         """
         Set up a new PDDL problem and start a new episode.
 

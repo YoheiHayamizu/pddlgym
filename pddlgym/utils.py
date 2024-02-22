@@ -1,4 +1,5 @@
-"""Utilities
+"""
+Utilities
 """
 from collections import defaultdict
 import contextlib

@@ -1,3 +1,4 @@
+from typing import Any
 from pddlgym.core import PDDLEnv
 from pddlgym.rendering import sar_render, slow_sar_render, posar_render, myopic_posar_render
 from pddlgym.structs import Type, Predicate, Not, State, LiteralConjunction
@@ -339,7 +340,7 @@ class SearchAndRescueEnv(PDDLSearchAndRescueEnv):
         assert isinstance(self._state, State), "Do not call get_state"
         return self._state
 
-    def reset(self):
+    def reset(self, *, seed: int | None = None, options: dict[str, Any] | None = None):
         internal_state, debug_info = super().reset()
         return self._internal_to_state(internal_state), debug_info
 
@@ -395,7 +396,7 @@ class POSARXrayEnv(gym.Env):
         self._seed = seed
         self._rng = np.random.RandomState(seed)
 
-    def reset(self):
+    def reset(self, *, seed: int | None = None, options: dict[str, Any] | None = None):
         """
         """
         if self._problem_idx is None:
@@ -593,7 +594,7 @@ class MyopicPOSAREnv(gym.Env):
         self._seed = seed
         self._rng = np.random.RandomState(seed)
 
-    def reset(self):
+    def reset(self, *, seed: int | None = None, options: dict[str, Any] | None = None):
         """
         """
         if self._problem_idx is None:
