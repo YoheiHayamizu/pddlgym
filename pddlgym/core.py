@@ -306,7 +306,9 @@ class PDDLEnv(gym.Env):
     def __init__(self, domain_file, problem_dir, render=None, seed=0,
                  raise_error_on_invalid_action=False,
                  operators_as_actions=False,
-                 dynamic_action_space=False):
+                 dynamic_action_space=False,
+                 render_mode="rgb_array"):
+        self.render_mode = render_mode
         self._state = None
         self._domain_file = domain_file
         self._problem_dir = problem_dir
