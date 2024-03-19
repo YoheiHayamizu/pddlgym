@@ -41,7 +41,7 @@ def run_demo(env, policy, max_num_steps=10, render=False,
 
     if seed is not None:
         env.seed(seed)
-
+    tot_reward = 0
     obs, _ = env.reset()
 
     if seed is not None:
@@ -59,7 +59,7 @@ def run_demo(env, policy, max_num_steps=10, render=False,
             print("Act:", action)
 
         obs, reward, terminated, truncated, _ = env.step(action)
-
+        tot_reward += reward
         env.render()
         if verbose:
             print("Rew:", reward)
