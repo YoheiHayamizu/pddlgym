@@ -394,6 +394,14 @@ class PDDLEnv(gym.Env):
     def action_space(self):
         return self._action_space
 
+    @property
+    def dynamic_action_space(self):
+        return self._dynamic_action_space
+
+    @property
+    def problem_index_fixed(self):
+        return self._problem_index_fixed
+
     def set_state(self, state):
         self._state = state
 
