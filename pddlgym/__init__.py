@@ -8,6 +8,7 @@ from . import spaces
 import matplotlib
 # matplotlib.use("Agg")
 from pddlgym.rendering import *
+from pddlgym.rendering_text import *
 from gymnasium.envs.registration import register
 import gymnasium as gym
 
@@ -52,7 +53,7 @@ for env_name, kwargs in [
         ("depot", {'operators_as_actions' : True,
                    'dynamic_action_space' : True}),
         ("baking", {}),
-        ("blocks", {'render' : blocks_render}),
+        ("blocks", {'render' : blocks_render, 'text_render' : blocks_text_render}),
         ("derivedblocks", {'render' : blocks_render}),
         ("toomanyblocks", {'render' : blocks_render}),
         ("lifelong_blocks6", {'render' : blocks_render}),

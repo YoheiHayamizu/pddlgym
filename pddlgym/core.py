@@ -303,16 +303,19 @@ class PDDLEnv(gym.Env):
         Let self.action_space dynamically change on each iteration to
         include only valid actions (must match operator preconditions).
     """
-    def __init__(self, domain_file, problem_dir, render=None, seed=0,
+    def __init__(self, domain_file, problem_dir,
+                 render=None, text_render=None, seed=0,
                  raise_error_on_invalid_action=False,
                  operators_as_actions=False,
                  dynamic_action_space=False,
-                 render_mode="rgb_array"):
+                 render_mode="rgb_array",
+                 ):
         self.render_mode = render_mode
         self._state = None
         self._domain_file = domain_file
         self._problem_dir = problem_dir
         self._render = render
+        self._text_render = text_render
         self.seed(seed)
         self._raise_error_on_invalid_action = raise_error_on_invalid_action
         self.operators_as_actions = operators_as_actions
@@ -453,6 +456,7 @@ class PDDLEnv(gym.Env):
 
         self._goal = self._problem.goal
         debug_info = self._get_debug_info()
+        debug_info["description"] = self._text_render(initial_state)
 
         self._action_space.reset_initial_state(initial_state)
 
@@ -498,6 +502,7 @@ class PDDLEnv(gym.Env):
         """
         state, reward, terminated, truncated, debug_info = self.sample_transition(action)
         self.set_state(state)
+        debug_info["description"] = self._text_render(state)
         return state, reward, terminated, truncated, debug_info
 
     def _get_new_state_info(self, state):

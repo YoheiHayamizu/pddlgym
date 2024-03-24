@@ -42,14 +42,15 @@ def run_demo(env, policy, max_num_steps=10, render=False,
     if seed is not None:
         env.seed(seed)
     tot_reward = 0
-    obs, _ = env.reset()
+    obs, info = env.reset()
 
     if seed is not None:
         env.action_space.seed(seed)
 
     for t in range(max_num_steps):
         if verbose:
-            print("Obs:", obs)
+            print("======Obs======")
+            print(f"{obs}")
 
         if render:
             images.append(env.render())
@@ -58,16 +59,19 @@ def run_demo(env, policy, max_num_steps=10, render=False,
         if verbose:
             print("Act:", action)
 
-        obs, reward, terminated, truncated, _ = env.step(action)
+        obs, reward, terminated, truncated, info = env.step(action)
         tot_reward += reward
         env.render()
         if verbose:
             print("Rew:", reward)
+        if verbose:
+            print(f"{info['description']}")
 
         if terminated or truncated:
             break
 
     if verbose:
+        print()
         print("Final obs:", obs)
         print()
 

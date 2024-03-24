@@ -1,7 +1,7 @@
 from io import StringIO
 
-import pddl
-from pddl_to_prolog import Rule, PrologProgram
+from pddlgym.downward_translate import pddl
+from pddlgym.downward_translate.pddl_to_prolog import Rule, PrologProgram
 
 def test_normalization():
     prog = PrologProgram()

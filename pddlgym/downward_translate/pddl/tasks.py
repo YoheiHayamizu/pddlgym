@@ -1,5 +1,5 @@
-from . import axioms
-from . import predicates
+from pddlgym.downward_translate.pddl import axioms
+from pddlgym.downward_translate.pddl import predicates
 
 
 class Task:
