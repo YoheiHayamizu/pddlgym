@@ -315,7 +315,6 @@ class PDDLEnv(gym.Env):
         self._domain_file = domain_file
         self._problem_dir = problem_dir
         self._render = render
-        self._text_render = text_render
         self.seed(seed)
         self._raise_error_on_invalid_action = raise_error_on_invalid_action
         self.operators_as_actions = operators_as_actions
