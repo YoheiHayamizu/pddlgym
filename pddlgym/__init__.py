@@ -53,6 +53,7 @@ for env_name, kwargs in [
                    'dynamic_action_space' : True}),
         ("baking", {}),
         ("blocks", {'render' : blocks_render}),
+        ("blocks_easy", {'render' : blocks_render}),
         ("derivedblocks", {'render' : blocks_render}),
         ("toomanyblocks", {'render' : blocks_render}),
         ("lifelong_blocks6", {'render' : blocks_render}),
