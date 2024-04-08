@@ -4,6 +4,7 @@ from . import tests
 from . import core
 from . import structs
 from . import spaces
+from . import wrappers
 
 import matplotlib
 # matplotlib.use("Agg")
