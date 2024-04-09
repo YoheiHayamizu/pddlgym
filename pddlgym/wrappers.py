@@ -49,10 +49,10 @@ class PDDLGymWrapper(gym.Wrapper):
         observation, info = self.env.reset(seed=seed, options=options)
         valid_actions = self.get_valid_actions(observation)
         if self.actions_in_obs:
-            info['description'] = self.text_render(observation, valid_actions)
+            info['description'] = self.pddlgym_env.text_render(observation, valid_actions)
             info['valid_actions'] = valid_actions
         else:
-            info['description'] = self.text_render(observation)
+            info['description'] = self.pddlgym_env.text_render(observation)
             info['valid_actions'] = valid_actions
         valid_actions_idx = self.get_valid_action_idx(valid_actions)
         # info['valid_actions_idx'] = valid_actions_idx
@@ -64,10 +64,10 @@ class PDDLGymWrapper(gym.Wrapper):
         observation, reward, terminated, truncated, info = self.env.step(action)
         valid_actions = self.get_valid_actions(observation)
         if self.actions_in_obs:
-            info['description'] = self.text_render(observation, valid_actions)
+            info['description'] = self.pddlgym_env.text_render(observation, valid_actions)
             info['valid_actions'] = valid_actions
         else:
-            info['description'] = self.text_render(observation)
+            info['description'] = self.pddlgym_env.text_render(observation)
             info['valid_actions'] = valid_actions
         valid_actions_idx = self.get_valid_action_idx(valid_actions)
         # info['valid_actions_idx'] = valid_actions_idx
