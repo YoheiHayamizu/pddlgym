@@ -85,10 +85,12 @@ def convert_state_to_text(state: State):
     return domain_objects + " " + goal_text + " " + current_observation
 
 
-def render(state: State, action: Optional[Literal] = None) -> str:
+def render(state: State, valid_actions: Optional[Literal] = None) -> str:
     # return "test"
     state_text = convert_state_to_text(state)
-    if action is not None:
-        action_text = f"Action: {action}"
+    if valid_actions is not None:
+        valid_actions = [str(literal) for literal in valid_actions]
+        valid_actions = ", ".join(valid_actions)
+        action_text = f"[Valid Action]: {valid_actions}"
         return state_text + "\n" + action_text
     return state_text
