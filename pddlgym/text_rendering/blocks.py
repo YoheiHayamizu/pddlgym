@@ -91,6 +91,6 @@ def render(state: State, valid_actions: Optional[Literal] = None) -> str:
     if valid_actions is not None:
         valid_actions = [str(literal) for literal in valid_actions]
         valid_actions = ", ".join(valid_actions)
-        action_text = f"[Valid Action]: {valid_actions}"
+        action_text = f"[Valid Actions]: {valid_actions}"
         return state_text + "\n" + action_text
     return state_text
