@@ -569,7 +569,7 @@ class PDDLEnv(gym.Env):
 
     def text_render(self, *args, **kwargs):
         if self._text_render:
-            return self._text_render(self._state, *args, **kwargs)
+            return self._text_render(*args, **kwargs)
 
     def _handle_derived_literals(self, state):
         # first remove any old derived literals since they're outdated
