@@ -411,6 +411,10 @@ class PDDLEnv(gym.Env):
     def problem_index_fixed(self):
         return self._problem_index_fixed
 
+    @property
+    def problem_idx(self):
+        return self._problem_idx
+
     def set_state(self, state):
         self._state = state
 

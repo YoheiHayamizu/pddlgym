@@ -153,8 +153,11 @@ class MacroActionWrapper(gym.ActionWrapper):
 
     def get_objects_from_problems(self):
         objects = set()
-        for problem in self.env.problems:
-            objects.update(problem.objects)
+        if self.env.problem_index_fixed:
+            objects = self.env.problems[self.env.problem_idx].objects
+        else:
+            for problem in self.env.problems:
+                objects.update(problem.objects)
         return list(objects)
 
     def get_max_arity(self):
