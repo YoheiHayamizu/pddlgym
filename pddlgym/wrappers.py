@@ -3,6 +3,9 @@ from functools import lru_cache
 import gymnasium as gym
 from typing import Optional
 
+import pddlgym
+from pddlgym.structs import Type, Predicate
+
 
 CACHE_SIZE = None
 
@@ -118,3 +121,51 @@ class PDDLGymWrapper(gym.Wrapper):
         # print(f"# of action_literals: {len(self.action_literals)}")
         # print(f"obs_literals: {self.obs_literals}")
         # print(f"action_literals: {self.action_literals}")
+
+
+class MacroActionWrapper(gym.ActionWrapper):
+    """
+    Wrapper for PDDLGym environments. This wrapper converts the literal actions into macro actions.
+    """
+    def __init__(self, env):
+        super(MacroActionWrapper, self).__init__(env)
+
+        self.action_templates = sorted(env.action_space.predicates)
+        self.action_params = sorted(self.get_objects_from_problems())
+        self.max_arity = self.get_max_arity()
+
+        self.action_space = gym.spaces.MultiDiscrete([len(self.action_templates)] + [len(self.action_params)] * self.max_arity)
+
+        # print(f"action template: {self.action_templates}")
+        # print(f"action params: {self.action_params}")
+        # print(f"action space: {self.action_space}")
+
+    def step(self, action: gym.spaces.MultiDiscrete):
+        action_template_idx = action[0]
+        action_param_idxs = action[1:]
+        action_template = self.action_templates[action_template_idx]
+        action_params = [self.action_params[idx] for idx in action_param_idxs]
+        action = self.action(action_template, action_params)
+        return self.env.step(action)
+
+    def action(self, action_template: Predicate, action_params: list):
+        return action_template(*action_params)
+
+    def get_objects_from_problems(self):
+        objects = set()
+        for problem in self.env.problems:
+            objects.update(problem.objects)
+        return list(objects)
+
+    def get_max_arity(self):
+        max_arity = 0
+        for action_template in self.action_templates:
+            max_arity = max(max_arity, action_template.arity)
+        return max_arity
+
+    def get_action_idx(self, action: Predicate):
+        action_template = action.predicate
+        action_params = action.variables
+        action_template_idx = self.action_templates.index(action_template)
+        action_param_idxs = [self.action_params.index(param) for param in action_params]
+        return [action_template_idx] + action_param_idxs

@@ -328,7 +328,7 @@ class PDDLEnv(gym.Env):
         self._problem_idx = None
 
         # Parse the PDDL files
-        self.domain, self.problems = self.load_pddl(domain_file, problem_dir,
+        self.domain, self._problems = self.load_pddl(domain_file, problem_dir,
             operators_as_actions=self.operators_as_actions)
 
         # Determine if the domain is STRIPS
@@ -404,6 +404,10 @@ class PDDLEnv(gym.Env):
         return self._dynamic_action_space
 
     @property
+    def problems(self):
+        return self._problems
+
+    @property
     def problem_index_fixed(self):
         return self._problem_index_fixed
 
@@ -447,8 +451,8 @@ class PDDLEnv(gym.Env):
             See self._get_debug_info()
         """
         if not self._problem_index_fixed:
-            self._problem_idx = self.rng.choice(len(self.problems))
-        self._problem = self.problems[self._problem_idx]
+            self._problem_idx = self.rng.choice(len(self._problems))
+        self._problem = self._problems[self._problem_idx]
 
         initial_state = State(frozenset(self._problem.initial_state),
                               frozenset(self._problem.objects),
