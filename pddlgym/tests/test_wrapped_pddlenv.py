@@ -1,6 +1,6 @@
 from pddlgym.core import PDDLEnv, InvalidAction
 from pddlgym.structs import Predicate, DerivedPredicate, Type, LiteralConjunction, ForAll
-from pddlgym.wrappers import MacroActionWrapper
+from pddlgym.wrappers import PDDLGymInfoWrapper
 
 import os
 import unittest
@@ -13,10 +13,10 @@ class TestPDDLEnv(unittest.TestCase):
 
         env = PDDLEnv(domain_file, problem_dir, raise_error_on_invalid_action=True,
                     dynamic_action_space=True)
-        env = MacroActionWrapper(env)
+        env = PDDLGymInfoWrapper(env)
         env2 = PDDLEnv(domain_file, problem_dir, raise_error_on_invalid_action=True,
                     dynamic_action_space=False)
-        env2 = MacroActionWrapper(env2)
+        env2 = PDDLGymInfoWrapper(env2)
 
         type1 = Type('type1')
         type2 = Type('type2')
@@ -31,24 +31,27 @@ class TestPDDLEnv(unittest.TestCase):
             pred3('a2', 'c2', 'd2') })
 
         # Invalid action
-        action_str = action_pred('b1')
-        action_idx = env.get_action_idx(action_str)
+        action = action_pred('b1')
 
         try:
-            env.step(action_idx)
+            obs, _, _, _, info = env.step(action)
             assert False, "Action was supposed to be invalid"
         except InvalidAction:
             pass
 
-        assert action_str not in env.unwrapped.action_space.all_ground_literals(obs), "Dynamic action space not working"
-        env2.reset()
-        assert action_str in env2.unwrapped.action_space.all_ground_literals(obs), "Dynamic action space not working"
+        assert action not in env.unwrapped.action_space.all_ground_literals(obs), "Dynamic action space not working"
+
+        obs, info = env2.reset()
+        # print(info)
+
+        assert action in env2.unwrapped.action_space.all_ground_literals(obs), "Dynamic action space not working"
+
 
         # Valid args
-        action_str = action_pred('b2')
-        action_idx = env.get_action_idx(action_str)
+        action = action_pred('b2')
 
-        obs, _, _, _, _ = env.step(action_idx)
+        obs, _, _, _, info = env.step(action)
+        # print(info)
 
         assert obs.literals == frozenset({ pred1('b2'), pred3('b2', 'd1', 'c1'),
             pred3('a1', 'c1', 'd1'), pred3('a2', 'c2', 'd2') })
@@ -63,14 +66,15 @@ class TestPDDLEnv(unittest.TestCase):
         problem_dir = os.path.join(dir_path, 'pddl', 'hierarchical_type_test_domain')
 
         env = PDDLEnv(domain_file, problem_dir)
-        env = MacroActionWrapper(env)
-        obs, _ = env.reset()
+        env = PDDLGymInfoWrapper(env)
+        obs, info = env.reset()
 
         ispresent = Predicate("ispresent", 1, [Type("entity")])
         islight = Predicate("islight", 1, [Type("object")])
         isfurry = Predicate("isfurry", 1, [Type("animal")])
         ishappy = Predicate("ishappy", 1, [Type("animal")])
         pet = Predicate("pet", 1, [Type("animal")])
+        throw = Predicate("throw", 1, [Type("object")])
 
         nomsy = Type("jindo")("nomsy")
         rover = Type("corgi")("rover")
@@ -79,20 +83,14 @@ class TestPDDLEnv(unittest.TestCase):
         block2 = Type("block")("block2")
         cylinder1 = Type("cylinder")("cylinder1")
 
-        assert obs.literals == frozenset({
-            ispresent(nomsy),
-            ispresent(rover),
-            ispresent(rene),
-            ispresent(block1),
-            ispresent(block2),
-            ispresent(cylinder1),
-            islight(block1),
-            islight(cylinder1),
-            isfurry(nomsy),
-        })
-
-        action_idx = env.get_action_idx(pet(block1))
-        obs, _, _, _, _ = env.step(action_idx)
+        valid_actions = {
+            0: pet(nomsy),
+            1: pet(rene),
+            2: pet(rover),
+            3: throw(block1),
+            4: throw(block2),
+            5: throw(cylinder1),
+        }
 
         assert obs.literals == frozenset({
             ispresent(nomsy),
@@ -106,8 +104,23 @@ class TestPDDLEnv(unittest.TestCase):
             isfurry(nomsy),
         })
 
-        action_idx = env.get_action_idx(pet(nomsy))
-        obs, _, _, _, _ = env.step(action_idx)
+        assert info["valid_actions"] == valid_actions
+
+        obs, _, _, _, _ = env.step(pet(block1))
+
+        assert obs.literals == frozenset({
+            ispresent(nomsy),
+            ispresent(rover),
+            ispresent(rene),
+            ispresent(block1),
+            ispresent(block2),
+            ispresent(cylinder1),
+            islight(block1),
+            islight(cylinder1),
+            isfurry(nomsy),
+        })
+
+        obs, _, _, _, _ = env.step(pet(nomsy))
 
         assert obs.literals == frozenset({
             ispresent(nomsy),
@@ -128,7 +141,7 @@ class TestPDDLEnv(unittest.TestCase):
         problem_dir = os.path.join(dir_path, "pddl", "derivedblocks")
 
         env = PDDLEnv(domain_file, problem_dir)
-        env = MacroActionWrapper(env)
+        env = PDDLGymInfoWrapper(env)
         obs, _ = env.reset()
 
         on_loc = Predicate("on_loc", 2, [Type("obj"), Type("loc")])
@@ -182,7 +195,7 @@ class TestPDDLEnv(unittest.TestCase):
 
         env = PDDLEnv(domain_file, problem_dir, raise_error_on_invalid_action=True,
                     dynamic_action_space=True)
-        env = MacroActionWrapper(env)
+        env = PDDLGymInfoWrapper(env)
 
         obs, _ = env.reset()
         action = env.unwrapped.action_space.all_ground_literals(obs).pop()
@@ -239,7 +252,7 @@ class TestPDDLEnv(unittest.TestCase):
 
         env = PDDLEnv(domain_file, problem_dir, raise_error_on_invalid_action=True,
                     dynamic_action_space=True)
-        env = MacroActionWrapper(env)
+        env = PDDLGymInfoWrapper(env)
 
         obs, _ = env.reset()
         action = env.unwrapped.action_space.all_ground_literals(obs).pop()
@@ -314,7 +327,7 @@ class TestPDDLEnv(unittest.TestCase):
 
         env = PDDLEnv(domain_file, problem_dir, raise_error_on_invalid_action=True,
                     dynamic_action_space=True)
-        env = MacroActionWrapper(env)
+        env = PDDLGymInfoWrapper(env)
 
         obs, _ = env.reset()
         action = env.unwrapped.action_space.all_ground_literals(obs).pop()
@@ -385,7 +398,7 @@ class TestPDDLEnv(unittest.TestCase):
 
         env = PDDLEnv(domain_file, problem_dir, raise_error_on_invalid_action=True,
                     dynamic_action_space=True)
-        env = MacroActionWrapper(env)
+        env = PDDLGymInfoWrapper(env)
 
         obs, _ = env.reset()
         all_actions = sorted(env.unwrapped.action_space.all_ground_literals(obs))
@@ -452,7 +465,7 @@ class TestPDDLEnv(unittest.TestCase):
         env = PDDLEnv(domain_file, problem_dir, raise_error_on_invalid_action=True,
                     dynamic_action_space=True)
         env.domain.determinize()
-        env = MacroActionWrapper(env)
+        env = PDDLGymInfoWrapper(env)
 
         obs, _ = env.reset()
         action = env.unwrapped.action_space.all_ground_literals(obs).pop()
