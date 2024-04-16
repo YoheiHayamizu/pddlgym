@@ -10,6 +10,7 @@ from pddlgym.structs import Type, Predicate, Literal
 CACHE_SIZE = None
 
 
+
 class PDDLGymInfoWrapper(gym.Wrapper):
     """
     Wrapper for PDDLGym environments that provides additional information about the environment. So that the agent can
@@ -51,8 +52,8 @@ class PDDLGymInfoWrapper(gym.Wrapper):
         self.cache_size = cache_size
         self.use_macro_actions = use_macro_actions
 
-        self.action_templates = {i: a for i, a in enumerate(sorted(env.action_space.predicates))}
-        self.action_params = {i: o for i, o in enumerate(sorted(self.get_objects_from_problems()))}
+        self.action_templates = {a: i for i, a in enumerate(sorted(env.action_space.predicates))}
+        self.action_params = {o: i for i, o in enumerate(sorted(self.get_objects_from_problems()))}
         self.max_arity = self.get_max_arity()
 
         # print(self.action_templates)
@@ -76,13 +77,15 @@ class PDDLGymInfoWrapper(gym.Wrapper):
         valid_actions = sorted(list(valid_actions))
         return valid_actions
 
-    def get_macro_actions(self, valid_actions):
-        macro_actions = []
+    def get_valid_macro_actions(self, valid_actions):
+        macro_action_dict = {}
         for action in valid_actions:
-            macro_action = [action.predicate] + action.variables
-            macro_actions.append(tuple(macro_action))
-        return macro_actions
-
+            action_template_idx = self.action_templates[action.predicate]
+            action_param_idxs = [self.action_params[param] for param in action.variables]
+            param_padding = [-1] * (self.max_arity - len(action_param_idxs))
+            action_param_idxs += param_padding
+            macro_action_dict[(action_template_idx, *action_param_idxs)] = action
+        return macro_action_dict
 
     def get_objects_from_problems(self):
         objects = set()
@@ -95,16 +98,9 @@ class PDDLGymInfoWrapper(gym.Wrapper):
 
     def get_max_arity(self):
         max_arity = 0
-        for action_template in self.action_templates.values():
+        for action_template in self.action_templates.keys():
             max_arity = max(max_arity, action_template.arity)
         return max_arity
-
-    def get_action_idx(self, action: Literal):
-        action_template = action.predicate
-        action_params = action.variables
-        action_template_idx = self.action_templates.index(action_template)
-        action_param_idxs = [self.action_params.index(param) for param in action_params]
-        return [action_template_idx] + action_param_idxs
 
     def update_info(self, observation, info):
         valid_actions = self.get_valid_actions(observation)
@@ -115,8 +111,9 @@ class PDDLGymInfoWrapper(gym.Wrapper):
             info['description'] = self.pddlgym_env.text_render(observation)
 
         if self.use_macro_actions:
-            valid_actions = self.get_macro_actions(valid_actions)
-        valid_actions_dict = {i: action for i, action in enumerate(valid_actions)}
+            valid_actions_dict = self.get_valid_macro_actions(valid_actions)
+        else:
+            valid_actions_dict = {i: action for i, action in enumerate(valid_actions)}
 
         info['valid_actions'] = valid_actions_dict
         return info
