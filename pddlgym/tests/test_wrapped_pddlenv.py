@@ -184,9 +184,6 @@ class TestPDDLEnv(unittest.TestCase):
             }
         )
 
-
-
-
     def test_get_all_possible_transitions(self):
         dir_path = os.path.dirname(os.path.realpath(__file__))
         domain_file = os.path.join(

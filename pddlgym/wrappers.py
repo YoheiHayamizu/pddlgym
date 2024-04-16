@@ -51,10 +51,12 @@ class PDDLGymInfoWrapper(gym.Wrapper):
         self.cache_size = cache_size
         self.use_macro_actions = use_macro_actions
 
-        self.action_templates = sorted(env.action_space.predicates)
-        self.action_params = sorted(self.get_objects_from_problems())
+        self.action_templates = {i: a for i, a in enumerate(sorted(env.action_space.predicates))}
+        self.action_params = {i: o for i, o in enumerate(sorted(self.get_objects_from_problems()))}
         self.max_arity = self.get_max_arity()
 
+        # print(self.action_templates)
+        # print(self.action_params)
         # print(f"observation_space: {self.observation_space}")
         # print(f"action_space: {self.action_space}")
 
@@ -93,7 +95,7 @@ class PDDLGymInfoWrapper(gym.Wrapper):
 
     def get_max_arity(self):
         max_arity = 0
-        for action_template in self.action_templates:
+        for action_template in self.action_templates.values():
             max_arity = max(max_arity, action_template.arity)
         return max_arity
 
