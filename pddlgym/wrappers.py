@@ -52,8 +52,9 @@ class PDDLGymInfoWrapper(gym.Wrapper):
         self.cache_size = cache_size
         self.use_macro_actions = use_macro_actions
 
+        null_param = Type("")
         self.action_templates = {a: i for i, a in enumerate(sorted(env.action_space.predicates))}
-        self.action_params = {o: i for i, o in enumerate(sorted(self.get_objects_from_problems()))}
+        self.action_params = {o: i for i, o in enumerate([null_param] + sorted(self.get_objects_from_problems()))}
         self.max_arity = self.get_max_arity()
 
         # print(self.action_templates)
@@ -82,7 +83,7 @@ class PDDLGymInfoWrapper(gym.Wrapper):
         for action in valid_actions:
             action_template_idx = self.action_templates[action.predicate]
             action_param_idxs = [self.action_params[param] for param in action.variables]
-            param_padding = [-1] * (self.max_arity - len(action_param_idxs))
+            param_padding = [0] * (self.max_arity - len(action_param_idxs))
             action_param_idxs += param_padding
             macro_action_dict[(action_template_idx, *action_param_idxs)] = action
         return macro_action_dict
